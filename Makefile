@@ -68,7 +68,6 @@ setup:
 sdl: $(SDL_LIB)
 
 $(SDL_LIB):
-	@echo "Building SDL3..."
 	@cd $(LIB_DIR)/SDL && \
 	cmake -S . -B ../../$(SDL_BUILD_DIR) \
 		-DCMAKE_BUILD_TYPE=Release \
@@ -80,45 +79,35 @@ $(SDL_LIB):
 		2>&1 | grep -v "^--" || true
 	@cmake --build $(SDL_BUILD_DIR) --target SDL3-shared -j8 2>&1 | grep -E "(Building|Linking|Built)" || true
 	@cp -r $(SDL_BUILD_DIR)/include-revision/* $(BUILD_DIR)/sdl_include/ 2>/dev/null || true
-	@echo "SDL3 built successfully"
 
 # Build CImGui
 cimgui: $(BUILD_DIR)/libcimgui.a
 
 $(BUILD_DIR)/cimgui/%.o: $(CIMGUI_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	@echo "Compiling $<"
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1 -c $< -o $@
 
 $(BUILD_DIR)/libcimgui.a: $(CIMGUI_OBJS)
-	@echo "Creating CImGui static library"
 	@ar rcs $@ $^
 
 # Build main executable
 $(BUILD_DIR)/main.o: $(MAIN_SRC)
-	@echo "Compiling main.c"
 	@$(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -c $< -o $@
 
 $(BUILD_DIR)/$(PROJECT_NAME): $(MAIN_OBJ) $(BUILD_DIR)/libcimgui.a $(SDL_LIB)
-	@echo "Linking $(PROJECT_NAME)"
 	@$(CC) $(LDFLAGS) -o $@ $(MAIN_OBJ) \
 		$(BUILD_DIR)/libcimgui.a \
 		-L$(SDL_BUILD_DIR) -lSDL3 \
 		$(FRAMEWORKS)
-	@echo "Build complete: $(BUILD_DIR)/$(PROJECT_NAME)"
 
 run: all
-	@echo "Running $(PROJECT_NAME)..."
 	@DYLD_LIBRARY_PATH=$(SDL_BUILD_DIR) ./$(BUILD_DIR)/$(PROJECT_NAME)
 
 clean:
-	@echo "Cleaning build directory..."
 	@rm -rf $(BUILD_DIR)
-	@echo "Clean complete"
 
 # Install SDL3 library to system (optional)
 install-sdl:
-	@echo "Copying SDL3 to /usr/local/lib"
 	@sudo cp $(SDL_LIB) /usr/local/lib/
 	@sudo install_name_tool -id /usr/local/lib/libSDL3.dylib /usr/local/lib/libSDL3.dylib
 
@@ -132,3 +121,18 @@ help:
 	@echo "  cimgui       - Build CImGui only"
 	@echo "  install-sdl  - Install SDL3 to system (requires sudo)"
 	@echo "  help         - Show this help message"
+	@echo "  push         - Push current dir to remote"
+	@echo "  push m=Hello - Sets commit message to Hello when pushing"
+
+# Git Helpers
+
+m=.
+
+push: add commit
+	git push
+
+add: 
+	git add Makefile lib src 
+
+commit:
+	git commit -a -m "$(m)"
