@@ -132,7 +132,7 @@ push: add commit
 	git push
 
 add: 
-	git add Makefile lib src 
+	git add Makefile lib src README.md 
 
 commit:
 	git commit -a -m "$(m)"
