@@ -32,7 +32,9 @@ FRAMEWORKS = -framework OpenGL \
 DEFINES = -DSOKOL_GLCORE
 
 # Source files
-MAIN_SRC = $(SRC_DIR)/main.c
+MAIN_SRC = \
+	$(SRC_DIR)/main.c \
+	$(SRC_DIR)/game.c
 
 # CImGui source files
 CIMGUI_DIR = $(LIB_DIR)/cimgui
