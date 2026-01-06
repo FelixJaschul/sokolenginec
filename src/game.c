@@ -34,18 +34,6 @@ state_t state;
 #define M_PI 3.14159265359 
 #endif // M_PI
 
-// Easy call for func
-#define Run()       app_run()
-#define Start()     app_run()
-#define Init()      app_init()
-#define Events()    app_events()
-#define Frame()     app_update()
-#define Update()    app_update()
-#define Render()    app_render()
-#define Deinit()    app_deinit()
-#define Shutdown()  app_deinit()
-#define Cleanup()   app_deinit()
-
 void app_init() 
 {
     ASSERT(SDL_Init(SDL_INIT_VIDEO));
@@ -158,13 +146,13 @@ void app_deinit()
 
 void app_run() 
 {
-    Init();
+    app_init();
     while (state.running)
     {
-        Events();
-        Update();
-        Render();
+        app_events();
+        app_update();
+        app_render();
     }
-    Deinit();
+    app_deinit();
 }
 

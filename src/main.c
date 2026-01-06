@@ -2,7 +2,7 @@
 
 int main() 
 {
-    Run(); 
+    app_run(); 
     return 0;
 }
 
