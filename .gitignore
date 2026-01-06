@@ -1,9 +1,0 @@
-bin/
-*.o
-*.d
-*.a
-*.dylib
-*.so
-.DS_Store
-
-build/
